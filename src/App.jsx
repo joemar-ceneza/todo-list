@@ -1,29 +1,64 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
+import useFetch from "./hook/useFetch";
 
 export default function App() {
+  const { data } = useFetch("/tasks");
   const [tasks, setTasks] = useState([]);
 
-  const addTask = (text) => {
-    const newTask = {
-      id: Date.now(),
-      text,
-      completed: false,
-    };
-    setTasks([...tasks, newTask]);
+  useEffect(() => {
+    if (data) {
+      setTasks(data);
+    }
+  }, [data]);
+
+  const addTask = async (text) => {
+    try {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
+      const newTask = await response.json();
+      setTasks([...tasks, newTask]);
+    } catch (error) {
+      console.error("Error adding task: ", error);
+    }
   };
 
-  const toggleComplete = (taskId) => {
-    setTasks(
-      tasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const toggleComplete = async (taskId) => {
+    const task = tasks.find((t) => t.id === taskId);
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/tasks/${taskId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ completed: !task.completed }),
+        }
+      );
+      const updatedTask = await response.json();
+      setTasks(tasks.map((t) => (t.id === taskId ? updatedTask : t)));
+    } catch (error) {
+      console.error("Error toggling task completion: ", error);
+    }
   };
 
-  const deleteTask = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+  const deleteTask = async (taskId) => {
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/tasks/${taskId}`, {
+        method: "DELETE",
+      });
+      setTasks(tasks.filter((task) => task.id !== taskId));
+    } catch (error) {
+      console.error("Error deleting task: ", error);
+    }
   };
 
   return (
