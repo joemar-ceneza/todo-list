@@ -2,7 +2,7 @@ import TaskItem from "./TaskItem";
 
 export default function TaskList({ tasks, onDelete, onToggleComplete }) {
   return (
-    <ul>
+    <ul className="mx-7">
       {tasks.map((task) => (
         <TaskItem
           key={task.id}
