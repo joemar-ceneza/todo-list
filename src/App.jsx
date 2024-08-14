@@ -4,7 +4,7 @@ import TaskList from "./components/TaskList";
 import useFetch from "./hook/useFetch";
 
 export default function App() {
-  const { data } = useFetch("/tasks");
+  const { data, isLoading } = useFetch("/tasks");
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -71,6 +71,7 @@ export default function App() {
         tasks={tasks}
         onDelete={deleteTask}
         onToggleComplete={toggleComplete}
+        isLoading={isLoading}
       />
     </main>
   );
