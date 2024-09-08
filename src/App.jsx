@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
 import useFetch from "./hook/useFetch";
+import { request } from "./request";
 
 export default function App() {
   const { data, isLoading } = useFetch("/tasks");
@@ -15,14 +16,8 @@ export default function App() {
 
   const addTask = async (text) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/tasks`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ text }),
-      });
-      const newTask = await response.json();
+      const response = await request.post(`/tasks`, { text });
+      const newTask = response.data;
       setTasks([...tasks, newTask]);
     } catch (error) {
       console.error("Error adding task: ", error);
@@ -33,17 +28,10 @@ export default function App() {
     const task = tasks.find((t) => t.id === taskId);
 
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/tasks/${taskId}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ completed: !task.completed }),
-        }
-      );
-      const updatedTask = await response.json();
+      const response = await request.patch(`/tasks/${taskId}`, {
+        completed: !task.completed,
+      });
+      const updatedTask = response.data;
       setTasks(tasks.map((t) => (t.id === taskId ? updatedTask : t)));
     } catch (error) {
       console.error("Error toggling task completion: ", error);
@@ -52,9 +40,7 @@ export default function App() {
 
   const deleteTask = async (taskId) => {
     try {
-      await fetch(`${process.env.REACT_APP_API_URL}/tasks/${taskId}`, {
-        method: "DELETE",
-      });
+      await request.delete(`/tasks/${taskId}`);
       setTasks(tasks.filter((task) => task.id !== taskId));
     } catch (error) {
       console.error("Error deleting task: ", error);
