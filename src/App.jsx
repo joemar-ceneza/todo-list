@@ -18,7 +18,7 @@ export default function App() {
     try {
       const response = await request.post(`/tasks`, { text });
       const newTask = response.data;
-      setTasks([...tasks, newTask]);
+      setTasks((prevTasks) => [...prevTasks, newTask]);
     } catch (error) {
       console.error("Error adding task: ", error);
     }
