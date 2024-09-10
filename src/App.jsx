@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import AddTaskForm from "./components/AddTaskForm";
 import TaskList from "./components/TaskList";
 import useFetch from "./hook/useFetch";
@@ -14,7 +14,7 @@ export default function App() {
     }
   }, [data]);
 
-  const addTask = async (text) => {
+  const addTask = useCallback(async (text) => {
     try {
       const response = await request.post(`/tasks`, { text });
       const newTask = response.data;
@@ -22,9 +22,9 @@ export default function App() {
     } catch (error) {
       console.error("Error adding task: ", error);
     }
-  };
+  }, []);
 
-  const toggleComplete = async (taskId) => {
+  const toggleComplete = useCallback(async (taskId) => {
     const task = tasks.find((t) => t.id === taskId);
 
     try {
@@ -36,16 +36,16 @@ export default function App() {
     } catch (error) {
       console.error("Error toggling task completion: ", error);
     }
-  };
+  }, []);
 
-  const deleteTask = async (taskId) => {
+  const deleteTask = useCallback(async (taskId) => {
     try {
       await request.delete(`/tasks/${taskId}`);
       setTasks(tasks.filter((task) => task.id !== taskId));
     } catch (error) {
       console.error("Error deleting task: ", error);
     }
-  };
+  }, []);
 
   return (
     <main className="max-w-xl mx-auto text-center">
