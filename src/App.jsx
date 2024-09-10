@@ -24,24 +24,29 @@ export default function App() {
     }
   }, []);
 
-  const toggleComplete = useCallback(async (taskId) => {
-    const task = tasks.find((t) => t.id === taskId);
+  const toggleComplete = useCallback(
+    async (taskId) => {
+      const task = tasks.find((t) => t.id === taskId);
 
-    try {
-      const response = await request.patch(`/tasks/${taskId}`, {
-        completed: !task.completed,
-      });
-      const updatedTask = response.data;
-      setTasks(tasks.map((t) => (t.id === taskId ? updatedTask : t)));
-    } catch (error) {
-      console.error("Error toggling task completion: ", error);
-    }
-  }, []);
+      try {
+        const response = await request.patch(`/tasks/${taskId}`, {
+          completed: !task.completed,
+        });
+        const updatedTask = response.data;
+        setTasks((prevTasks) =>
+          prevTasks.map((t) => (t.id === taskId ? updatedTask : t))
+        );
+      } catch (error) {
+        console.error("Error toggling task completion: ", error);
+      }
+    },
+    [tasks]
+  );
 
   const deleteTask = useCallback(async (taskId) => {
     try {
       await request.delete(`/tasks/${taskId}`);
-      setTasks(tasks.filter((task) => task.id !== taskId));
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
     } catch (error) {
       console.error("Error deleting task: ", error);
     }
