@@ -14,13 +14,17 @@ export default function App() {
     }
   }, [data]);
 
+  const handleError = (error, action) => {
+    console.error(`Error ${action}`, error);
+  };
+
   const addTask = useCallback(async (text) => {
     try {
       const response = await request.post(`/tasks`, { text });
       const newTask = response.data;
       setTasks((prevTasks) => [...prevTasks, newTask]);
     } catch (error) {
-      console.error("Error adding task: ", error);
+      handleError(error, "adding task");
     }
   }, []);
 
@@ -37,7 +41,7 @@ export default function App() {
           prevTasks.map((t) => (t.id === taskId ? updatedTask : t))
         );
       } catch (error) {
-        console.error("Error toggling task completion: ", error);
+        handleError(error, "toggling task completion");
       }
     },
     [tasks]
@@ -48,7 +52,7 @@ export default function App() {
       await request.delete(`/tasks/${taskId}`);
       setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
     } catch (error) {
-      console.error("Error deleting task: ", error);
+      handleError(error, "deleting task");
     }
   }, []);
 
