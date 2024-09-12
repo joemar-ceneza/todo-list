@@ -5,7 +5,7 @@ export default function AddTaskForm({ onAddTask }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (task) {
+    if (task.trim()) {
       onAddTask(task);
       setTask("");
     }
@@ -19,7 +19,9 @@ export default function AddTaskForm({ onAddTask }) {
         value={task}
         onChange={(e) => setTask(e.target.value)}
       />
-      <button className="bg-green-400 shadow appearance-none border rounded py-2 px-3 capitalize">
+      <button
+        type="submit"
+        className="bg-green-400 shadow appearance-none border rounded py-2 px-3 capitalize">
         add task
       </button>
     </form>
