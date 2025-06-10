@@ -1,4 +1,10 @@
-export default function TaskItem({ task, onToggleComplete, onDelete }) {
+import { TaskItemProps } from "../types/types";
+
+export default function TaskItem({
+  task,
+  onToggleComplete,
+  onDelete,
+}: TaskItemProps) {
   return (
     <>
       <li className="flex justify-between items-center py-3">

@@ -1,14 +1,19 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { AddTaskFormProps } from "../types/types";
 
-export default function AddTaskForm({ onAddTask }) {
-  const [task, setTask] = useState("");
+export default function AddTaskForm({ onAddTask }: AddTaskFormProps) {
+  const [task, setTask] = useState<string>("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (task.trim()) {
       onAddTask(task);
       setTask("");
     }
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setTask(e.target.value);
   };
   return (
     <form className="py-2" onSubmit={handleSubmit}>
@@ -17,7 +22,7 @@ export default function AddTaskForm({ onAddTask }) {
         type="text"
         placeholder="Add New Task"
         value={task}
-        onChange={(e) => setTask(e.target.value)}
+        onChange={handleChange}
       />
       <button
         type="submit"
